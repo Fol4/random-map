@@ -25,7 +25,7 @@ MeX, MeY = WinWidth//2, WinHeight//2
 x, y = MeX, MeY
 me = pygame.Surface((MeWidth, MeHeight))
 me.fill((63,81,181))
-MeSpeed = 5
+MeSpeed = 15
 
 # TEXT
 FontXY = pygame.font.Font(None , 22)
@@ -37,9 +37,10 @@ TreeData = []
 TreeWidth, TreeHeight = WinWidth//55, WinHeight//50
 
 #FIELD
-MaxX, MaxY = 2*WinHeight, 2*WinWidth
-MinX, MinY = -WinHeight, -WinWidth
+MaxX, MaxY = 2*WinWidth, 2*WinHeight
+MinX, MinY = -WinWidth, -WinHeight
 LastChunk = [MeX, MeY]
+ChunkData = [[WinWidth//2, WinHeight//2]]
 
 'FUNCTIONS'
 
@@ -47,7 +48,7 @@ LastChunk = [MeX, MeY]
 def spawnTree(max, min):
     x1, y1 = max[0], max[1]
     x2, y2 = min[0], min[1]
-    count = random.randint((x1-x2)//89 , (x1-x2)//79)
+    count = random.randint((x1-x2)//30 , (x1-x2)//20)
     for i in range(count):
         x = random.randint(x2,x1)
         y = random.randint(y2,y1)
@@ -71,7 +72,7 @@ def moveTree(axis, speed):
         else:
             info['pos'][1] += speed
 
-
+#ME
 def Transport(value , axis):
     global x, y, MaxX, MaxY, MinX, MinY, LastChunk
     if axis == 'x':
@@ -96,13 +97,45 @@ def Transport(value , axis):
             y -= MeSpeed
             if y < MinY:
                 MinY = y
-    if abs(LastChunk[0] - x) == WinHeight:
+    if abs(LastChunk[0] - x) > WinWidth:
+        if LastChunk[0]>x:
+            token = '-'
+        else:
+            token = '+'
         LastChunk[0] = x
-        #swapChunk()
-    if abs(LastChunk[1] - y) == WinWidth:
+        swapChunk('x', token, LastChunk)
+    if abs(LastChunk[1] - y) > WinHeight:
+        if LastChunk[1]>y:
+            token = '-'
+        else:
+            token = '+'
         LastChunk[1] = y
-        #swapChunk()
+        swapChunk('y', token, LastChunk)
     return FontXY.render('x : ' + str(x) + ' , y : ' + str(y) , True , (0,0,0))
+
+#CHUNK
+def swapChunk(axis , value , LastChunk):
+    if LastChunk not in ChunkData:
+        ChunkData.append(LastChunk.copy())
+        if axis == 'x':
+            if value == '-':
+                xmin, ymin = -WinWidth, -WinHeight
+                xmax, ymax = 0, 2*WinHeight
+                spawnTree([xmax, ymax], [xmin, ymin])
+            else:
+                xmin, ymin = WinWidth, -WinHeight
+                xmax, ymax = 2*WinWidth, 2*WinHeight
+                spawnTree([xmax, ymax], [xmin, ymin])
+        else:
+            if value == '-':
+                xmin, ymin = -WinWidth, -WinHeight
+                xmax, ymax = 2*WinWidth, 0
+                spawnTree([xmax, ymax], [xmin, ymin])
+            else:
+                xmin, ymin = -WinWidth, WinHeight
+                xmax, ymax = 2*WinWidth, 2*WinHeight
+                spawnTree([xmax, ymax], [xmin, ymin])
+
 
 
 'MAINLOOP'
