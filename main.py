@@ -73,7 +73,7 @@ def moveTree(axis, speed):
             info['pos'][1] += speed
 
 #ME
-def Transport(value , axis):
+def Transport(value, axis):
     global x, y, MaxX, MaxY, MinX, MinY, LastChunk
     if axis == 'x':
         if value == '+':
@@ -113,8 +113,14 @@ def Transport(value , axis):
         swapChunk('y', token, LastChunk)
     return FontXY.render('x : ' + str(x) + ' , y : ' + str(y) , True , (0,0,0))
 
+def Destroy(Mex, Mey):
+    for info in TreeData:
+        TreeX, TreeY = info['pos'][0], info['pos'][1]
+        if abs(Mex - TreeX) <= TreeWidth and abs(Mey - TreeY) <= TreeHeight:
+            TreeData.remove(info)
+
 #CHUNK
-def swapChunk(axis , value , LastChunk):
+def swapChunk(axis, value, LastChunk):
     if LastChunk not in ChunkData:
         ChunkData.append(LastChunk.copy())
         if axis == 'x':
@@ -151,6 +157,8 @@ while GameRun:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             GameRun = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            Destroy(MeX, MeY)
 
     keys = pygame.key.get_pressed()
 
