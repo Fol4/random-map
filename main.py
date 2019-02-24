@@ -116,9 +116,19 @@ def Transport(value, axis):
 def Destroy(Mex, Mey):
     for info in TreeData:
         TreeX, TreeY = info['pos'][0], info['pos'][1]
-        if abs(Mex - TreeX) <= TreeWidth and abs(Mey - TreeY) <= TreeHeight:
+        if abs(Mex - TreeX) <= TreeWidth+10 and abs(Mey - TreeY) <= TreeHeight+10:
             TreeData.remove(info)
 
+def Check(MeX, MeY, TreeData, MeSpeedX, MeSpeedY):
+    k  = 0
+    for info in TreeData:
+        TreeX, TreeY = info['pos'][0], info['pos'][1]
+        if abs(MeX - TreeX) <= TreeWidth and abs(MeY - TreeY) <= TreeHeight:
+            k = 1
+    if k == 1:
+        return False
+    else:
+        return True
 #CHUNK
 def swapChunk(axis, value, LastChunk):
     if LastChunk not in ChunkData:
@@ -162,16 +172,16 @@ while GameRun:
 
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_w]:
+    if keys[pygame.K_w] and Check(MeX, MeY, TreeData, 0, -MeSpeed):
         value, axis = '-', 'y'
         TextCoordinates = Transport(value, axis)
-    if keys[pygame.K_d]:
+    if keys[pygame.K_d] and Check(MeX, MeY, TreeData, MeSpeed, 0):
         value, axis = '+', 'x'
         TextCoordinates = Transport(value, axis)
-    if keys[pygame.K_s]:
+    if keys[pygame.K_s] and Check(MeX, MeY, TreeData, 0, MeSpeed):
         value, axis = '+', 'y'
         TextCoordinates = Transport(value, axis)
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] and Check(MeX, MeY, TreeData, -MeSpeed, 0):
         value, axis = '-', 'x'
         TextCoordinates = Transport(value, axis)
 
