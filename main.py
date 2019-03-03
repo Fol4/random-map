@@ -25,7 +25,7 @@ MeX, MeY = WinWidth//2, WinHeight//2
 x, y = MeX, MeY
 me = pygame.Surface((MeWidth, MeHeight))
 me.fill((63,81,181))
-MeSpeed = 15
+MeSpeed = 5
 
 # TEXT
 FontXY = pygame.font.Font(None , 22)
@@ -123,8 +123,12 @@ def Check(MeX, MeY, TreeData, MeSpeedX, MeSpeedY):
     k  = 0
     for info in TreeData:
         TreeX, TreeY = info['pos'][0], info['pos'][1]
-        if abs(MeX - TreeX) <= TreeWidth and abs(MeY - TreeY) <= TreeHeight:
-            k = 1
+        if MeX > TreeX and MeSpeedX < 0 or \
+                MeX < TreeX and MeSpeedX > 0 or \
+                        MeY < TreeY and MeSpeedY > 0 or \
+                                MeY > TreeY and MeSpeedY < 0:
+            if abs(MeX - TreeX) <= TreeWidth and abs(MeY - TreeY) <= TreeHeight:
+                k = 1
     if k == 1:
         return False
     else:
@@ -171,7 +175,10 @@ while GameRun:
             Destroy(MeX, MeY)
 
     keys = pygame.key.get_pressed()
-
+    if keys[pygame.K_LSHIFT]:
+        MeSpeed = 10
+    else:
+        MeSpeed = 5
     if keys[pygame.K_w] and Check(MeX, MeY, TreeData, 0, -MeSpeed):
         value, axis = '-', 'y'
         TextCoordinates = Transport(value, axis)
